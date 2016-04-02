@@ -23,9 +23,78 @@ head(activity)
 6    NA 2012-10-01       25
 #3 Data
 #3.1Sum steps by day, create Histogram, and calculate mean and median.
-totalstep<-aggregate(activity$step, by=list(activity$date), na.rm=TRUE, FUN=sum)
+totalstep<-aggregate(activity$steps, na.rm=T, by=list(activity$date), FUN=sum)
+totalstep<-subset(totalstep, totalstep$x!="0")
 g<-ggplot(totalstep, aes(x=x))
-g+geom_histogram(binwidth=1000)+xlab("steps per day")+ylab("frequency")+title("Histogram of Steps per day")
+g+geom_histogram(binwidth=1000)+xlab("steps per day")+ylab("frequency")
+mean_steps <- mean(totalstep$x, na.rm = TRUE)
+mean_steps
+10766.19
+median_steps<-median(totalstep$x, na.rm=TRUE)
+median_steps
+10765
+
+#4 What is the average daily activity pattern?
+activity_n<-subset(activity, activity$steps!="NA")
+steps_ave<-aggregate(activity_n$steps, by=list(activity_n$interval), FUN=mean)
+head(steps_ave)
+  Group.1         x
+1       0 1.7169811
+2       5 0.3396226
+3      10 0.1320755
+4      15 0.1509434
+5      20 0.0754717
+6      25 2.0943396
+
+g<-ggplot(steps_ave, aes(x=Group.1, y=x))
+g+geom_line()+xlab("interval")+ylab("mean steps")
+
+#5 Imputing missing values
+activity.replaceNA<- activity %>% group_by(interval)  %>% mutate(steps= ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps))
+head(activity.replaceNA)
+   steps       date interval
+      (dbl)     (fctr)    (int)
+1 1.7169811 2012-10-01        0
+2 0.3396226 2012-10-01        5
+3 0.1320755 2012-10-01       10
+4 0.1509434 2012-10-01       15
+5 0.0754717 2012-10-01       20
+6 2.0943396 2012-10-01       25
+
+totalstep<-aggregate(activity.replaceNA$steps, na.rm=T, by=list(activity.replaceNA$date), FUN=sum)
+head(totalstep)
+     Group.1        x
+1 2012-10-01 10766.19
+2 2012-10-02   126.00
+3 2012-10-03 11352.00
+4 2012-10-04 12116.00
+5 2012-10-05 13294.00
+6 2012-10-06 15420.00
+g<-ggplot(totalstep, aes(x))
+g+geom_histogram()+xlab("steps per day")+ylab("Frequency")
+
+#Are there differences in activity patterns between weekdays and weekends?
+>activitynew<-activity.replaceNA
+> notweekend<-weekdays %in% c("Monday", "Tuesday", "Wednesday","Thursday","Friday")
+> weekdays[notweekend]<-"Weekday"
+> Sat<-weekdays=="Saturday"
+> weekdays[Sat]<-"Weekend"
+> Sun<-weekdays=="Sunday"
+> weekdays[Sun]<-"Weekend"
+> data<-cbind(activitynew, day=weekdays)
+> head(data)
+     steps       date interval     day
+1 1.7169811 2012-10-01        0 Weekday
+2 0.3396226 2012-10-01        5 Weekday
+3 0.1320755 2012-10-01       10 Weekday
+4 0.1509434 2012-10-01       15 Weekday
+5 0.0754717 2012-10-01       20 Weekday
+6 2.0943396 2012-10-01       25 Weekday
+>dataweekend<-subset(data, data$day=="Weekend")
+> dataweekday<-subset(data, data$day=="Weekday")
+
+
+
 
 
 

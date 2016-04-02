@@ -90,8 +90,15 @@ g+geom_histogram()+xlab("steps per day")+ylab("Frequency")
 4 0.1509434 2012-10-01       15 Weekday
 5 0.0754717 2012-10-01       20 Weekday
 6 2.0943396 2012-10-01       25 Weekday
->dataweekend<-subset(data, data$day=="Weekend")
-> dataweekday<-subset(data, data$day=="Weekday")
+dataweekend<-subset(data, data$day=="Weekend")
+dataweekday<-subset(data, data$day=="Weekday")
+datanew<-aggregate(dataweekday$steps, by=list(dataweekday$date), FUN=sum)
+datanew2<-aggregate(dataweekend$steps, by=list(dataweekend$date), FUN=sum)
+g<-ggplot(datanew, aes(x=Group.1, y=x))
+g+geom_line()+xlab("interval")+ylab("mean steps")
+g<-ggplot(datanew2, aes(x=Group.1, y=x))
+g+geom_line()+xlab("interval")+ylab("weekday mean steps")
+
 
 
 

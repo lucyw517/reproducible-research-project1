@@ -4,6 +4,7 @@ It is now possible to collect a large amount of data about personal movement usi
 This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
 
 #1.Loading and preprocessing the data
+
 url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 download.file(url, destfile="./Desktop/data.zip", method="curl")
 unzip("data.zip")
